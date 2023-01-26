@@ -13,7 +13,7 @@ def check_for_redirect(response: requests.Response) -> None:
         raise requests.HTTPError()
 
 
-def download_txt(book_id: int, file_name: str, url: str, dir_name: str = 'books/',) -> None:
+def download_txt(book_id: int, file_name: str, url: str, dir_name: str = 'books/') -> None:
     response = requests.get(url)
     response.raise_for_status()
     check_for_redirect(response)
@@ -24,13 +24,12 @@ def download_txt(book_id: int, file_name: str, url: str, dir_name: str = 'books/
         file.write(response.content)
 
 
-def download_image(url: str, dir_name: str = 'images/',) -> None:
+def download_image(url: str, dir_name: str = 'images/') -> None:
     response = requests.get(url)
     response.raise_for_status()
     check_for_redirect(response)
 
     file_name = urlparse(url).path.split('/')[-1]
-    print(file_name)
 
     with open(f'{dir_name}/{file_name}', 'wb') as file:
         file.write(response.content)
@@ -53,10 +52,18 @@ def parsing_page(url: str):
     image_path = page_html.find('div', class_='bookimage').find('img')['src']
     image_url = urljoin(f'https://{urlsplit(url).netloc}', image_path)
 
+    comments = page_html.find_all('div', class_='texts')
+    if not comments:
+        comments = None
+    else:
+        comments = [comment.find('span', class_='black').text for comment in comments]
+    print(comments)
+
     return {
         'title': title,
         'author': author,
         'image_url': image_url,
+        'comments': comments
     }
 
 
@@ -67,7 +74,7 @@ def main():
     create_directory(dir_books)
     create_directory(dir_images)
 
-    for book_id in range(1, 10):
+    for book_id in range(9, 10):
         url = f'https://tululu.org/b{book_id}/'
         try:
             page_values = parsing_page(url)
