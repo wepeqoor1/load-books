@@ -85,11 +85,8 @@ def main() -> None:
     book_id_from = args.first
     book_id_last = args.last
 
-    dir_books = 'books'
-    dir_images = 'images'
-
-    create_directory(dir_books)
-    create_directory(dir_images)
+    create_directory('books')
+    create_directory('images')
 
     for book_id in range(book_id_from, book_id_last + 1):
         url = f'https://tululu.org/b{book_id}/'
