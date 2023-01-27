@@ -39,7 +39,7 @@ def create_directory(name: str) -> None:
     Path(name).mkdir(parents=True, exist_ok=True)
 
 
-def parsing_page(url: str):
+def parse_book_page(url: str) -> dict:
     response = requests.get(url)
     response.raise_for_status()
     page_html = BeautifulSoup(response.text, 'lxml')
@@ -67,7 +67,7 @@ def parsing_page(url: str):
     }
 
 
-def main():
+def main() -> None:
     dir_books = 'books'
     dir_images = 'images'
 
@@ -77,17 +77,16 @@ def main():
     for book_id in range(9, 10):
         url = f'https://tululu.org/b{book_id}/'
         try:
-            page_values = parsing_page(url)
+            page_values = parse_book_page(url)
         except ValueError:
             continue
-        # print(page_values['title'], page_values['author'], page_values['image_url'], sep=' | ')
 
         download_image(page_values['image_url'])
 
-        # try:
-        #     download_txt(book_id, title, url, dir_name)
-        # except requests.HTTPError:
-        #     continue
+        try:
+            download_txt(book_id, page_values['title'], url, page_values['dir_name'])
+        except requests.HTTPError:
+            continue
 
 
 if __name__ == '__main__':
