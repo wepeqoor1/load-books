@@ -53,17 +53,17 @@ def parsing_page(url: str):
     image_url = urljoin(f'https://{urlsplit(url).netloc}', image_path)
 
     comments = page_html.find_all('div', class_='texts')
-    if not comments:
-        comments = None
-    else:
-        comments = [comment.find('span', class_='black').text for comment in comments]
-    print(comments)
+    comments = [comment.find('span', class_='black').text for comment in comments] if comments else None
+
+    genres = page_html.find('span', class_='d_book').find_all('a')
+    genres = [genre.text for genre in genres] if comments else None
 
     return {
         'title': title,
         'author': author,
         'image_url': image_url,
-        'comments': comments
+        'comments': comments,
+        'genre': genres,
     }
 
 
