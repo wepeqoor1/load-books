@@ -2,8 +2,8 @@
 
 ## Запуск
 
-- На компьютере должен быть установлен [Python 3.8+]('https://www.python.org').
-- Установите [виртуальное окружение]('https://docs.python.org/3/tutorial/venv.html')
+- На компьютере должен быть установлен [Python 3.8+](https://www.python.org).
+- Установите виртуальное [окружение](https://docs.python.org/3/tutorial/venv.html).
 - Установите зависимости командой:
 ``` bash
 pip install -r requirements.txt
