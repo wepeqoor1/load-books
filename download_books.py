@@ -3,9 +3,9 @@ import argparse
 import requests as requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
-
 from pathlib import Path
 from urllib.parse import urljoin, urlsplit, urlparse
+from tqdm import tqdm
 
 
 def check_for_redirect(response: requests.Response) -> None:
@@ -71,8 +71,8 @@ def parse_book_page(url: str) -> dict:
 
 def arguments_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(""" \
-    Программа предназначена для скачивания книг с сайта 'https://tululu.org
-    '""")
+    Программа предназначена для скачивания книг с сайта 'https://tululu.org'
+    """)
     parser.add_argument('first', type=int, default=1, help='id первой книги')
     parser.add_argument('last', type=int, default=10, help='id последней книги')
 
@@ -88,7 +88,7 @@ def main() -> None:
     create_directory('books')
     create_directory('images')
 
-    for book_id in range(book_id_from, book_id_last + 1):
+    for book_id in tqdm(range(book_id_from, book_id_last + 1)):
         url = f'https://tululu.org/b{book_id}/'
         try:
             page_values = parse_book_page(url)
