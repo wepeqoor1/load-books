@@ -1,3 +1,5 @@
+import argparse
+
 import requests as requests
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
@@ -67,24 +69,42 @@ def parse_book_page(url: str) -> dict:
     }
 
 
+def arguments_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(""" \
+    Программа предназначена для скачивания книг с сайта 'https://tululu.org
+    '""")
+    parser.add_argument('first', type=int, default=1, help='id первой книги')
+    parser.add_argument('last', type=int, default=10, help='id последней книги')
+
+    return parser
+
+
 def main() -> None:
+    parser = arguments_parser()
+    args = parser.parse_args()
+    book_id_from = args.first
+    book_id_last = args.last
+
     dir_books = 'books'
     dir_images = 'images'
 
     create_directory(dir_books)
     create_directory(dir_images)
 
-    for book_id in range(9, 10):
+    for book_id in range(book_id_from, book_id_last + 1):
         url = f'https://tululu.org/b{book_id}/'
         try:
             page_values = parse_book_page(url)
         except ValueError:
             continue
 
-        download_image(page_values['image_url'])
+        try:
+            download_image(page_values['image_url'])
+        except requests.HTTPError:
+            continue
 
         try:
-            download_txt(book_id, page_values['title'], url, page_values['dir_name'])
+            download_txt(book_id, page_values['title'], url)
         except requests.HTTPError:
             continue
 
