@@ -85,8 +85,8 @@ def main() -> None:
     book_id_from = args.first
     book_id_last = args.last
 
-    create_directory('books')
-    create_directory('images')
+    Path('books').mkdir(parents=True, exist_ok=True)
+    Path('images').mkdir(parents=True, exist_ok=True)
 
     for book_id in tqdm(range(book_id_from, book_id_last + 1)):
         url = f'https://tululu.org/b{book_id}/'
