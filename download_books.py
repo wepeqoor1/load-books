@@ -1,4 +1,5 @@
 import argparse
+import logging
 from pathlib import Path
 from urllib.parse import urljoin, urlparse, urlsplit
 
@@ -35,10 +36,6 @@ def download_image(url: str, dir_name: str = 'images/') -> None:
 
     with open(f'{dir_name}/{file_name}', 'wb') as file:
         file.write(response.content)
-
-
-def create_directory(name: str) -> None:
-    Path(name).mkdir(parents=True, exist_ok=True)
 
 
 def parse_book_page(url: str) -> dict:
@@ -80,6 +77,8 @@ def parsing_arguments() -> argparse.ArgumentParser:
 
 
 def main() -> None:
+    logging.basicConfig(filename='information.log', level=logging.INFO, encoding='utf-8')
+
     parser = parsing_arguments()
     args = parser.parse_args()
     book_id_from = args.first
@@ -93,17 +92,18 @@ def main() -> None:
         try:
             page_values = parse_book_page(url)
         except ValueError:
-            continue
-
-        try:
-            download_image(page_values['image_url'])
-        except requests.HTTPError:
+            logging.info(f'На странице {url} отсутствует книга. Переходим к следующей.')
             continue
 
         try:
             download_txt(book_id, page_values['title'], url)
         except requests.HTTPError:
-            continue
+            logging.info(f'Книга на странице {url} на скачена. Текст отсутствует по данному адресу.')
+
+        try:
+            download_image(page_values['image_url'])
+        except requests.HTTPError:
+            logging.info(f'Обложка на странице {url} на скачена. Картинка отсутствует по данному адресу.')
 
 
 if __name__ == '__main__':
