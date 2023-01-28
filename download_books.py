@@ -69,7 +69,7 @@ def parse_book_page(url: str) -> dict:
     }
 
 
-def arguments_parser() -> argparse.ArgumentParser:
+def parsing_arguments() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(""" \
     Программа предназначена для скачивания книг с сайта 'https://tululu.org'
     """)
@@ -80,7 +80,7 @@ def arguments_parser() -> argparse.ArgumentParser:
 
 
 def main() -> None:
-    parser = arguments_parser()
+    parser = parsing_arguments()
     args = parser.parse_args()
     book_id_from = args.first
     book_id_last = args.last
