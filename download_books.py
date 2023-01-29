@@ -12,7 +12,7 @@ from pathvalidate import sanitize_filename
 from tqdm import tqdm
 
 
-def check_for_redirect(response: requests.Response) -> None:
+def check_redirect(response: requests.Response) -> None:
     """Проверяет ссылки на редирект"""
     response_url = response.url
     if response_url == 'https://tululu.org/' or response.history:
@@ -28,7 +28,7 @@ def retry_request(func):
             except requests.exceptions.ConnectionError:
                 time.sleep(reconnect_time)
                 reconnect_time *= 2
-                logger.warning(f'Потеря соединения. Повторный запрос через {reconnect_time}')
+                logger.warning(f'Потеря соединения. Повторный запрос через {reconnect_time} секунд')
 
     return wrapper
 
@@ -37,14 +37,13 @@ def retry_request(func):
 def get_response(url: str) -> requests.Response:
     response: requests.Response = requests.get(url)
     response.raise_for_status()
+    check_redirect(response)
     return response
 
 
 def download_txt(book_id: int, file_name: str, url: str, dir_name: str = 'books/') -> None:
     """Скачивает текст"""
     response = get_response(url)
-
-    check_for_redirect(response)
     clear_file_name = sanitize_filename(file_name)
 
     with open(f'{dir_name}/{book_id}. {clear_file_name}.txt', 'wb') as file:
@@ -54,7 +53,6 @@ def download_txt(book_id: int, file_name: str, url: str, dir_name: str = 'books/
 def download_image(url: str, dir_name: str = 'images/') -> None:
     """Скачивает картинку книги"""
     response = get_response(url)
-    check_for_redirect(response)
 
     file_name = urlparse(url).path.split('/')[-1]
 
@@ -62,9 +60,8 @@ def download_image(url: str, dir_name: str = 'images/') -> None:
         file.write(response.content)
 
 
-def parse_book_page(url: str) -> dict:
+def parse_book_page(response: requests.Response) -> dict:
     """Парсит html страницу и возвращает данные о книге"""
-    response = get_response(url)
     page_html = BeautifulSoup(response.text, 'lxml')
 
     if book_title := page_html.find('h1'):
@@ -73,13 +70,13 @@ def parse_book_page(url: str) -> dict:
         raise ValueError
 
     image_path = page_html.find('div', class_='bookimage').find('img')['src']
-    image_url = urljoin(f'https://{urlsplit(url).netloc}', image_path)
+    image_url = urljoin(f'https://{urlsplit(response.url).netloc}', image_path)
 
-    comments = page_html.find_all('div', class_='texts')
-    comments = [comment.find('span', class_='black').text for comment in comments] if comments else None
+    comments_html = page_html.find_all('div', class_='texts')
+    comments = [comment.find('span', class_='black').text for comment in comments_html] if comments_html else None
 
-    genres = page_html.find('span', class_='d_book').find_all('a')
-    genres = [genre.text for genre in genres] if comments else None
+    genres_html = page_html.find('span', class_='d_book').find_all('a')
+    genres = [genre.text for genre in genres_html] if comments else None
 
     return {
         'title': title,
@@ -118,10 +115,13 @@ def main() -> None:
 
         url = f'https://tululu.org/b{book_id}/'
         try:
-            page_values = parse_book_page(url)
+            response = get_response(url)
+            page_values = parse_book_page(response)
             logger.info(f'Информация о книге собрана с адреса {url}')
+        except requests.HTTPError:
+            logger.warning(f'На странице {url} отсутствует книга. Переходим к следующей.')
         except ValueError:
-            logger.info(f'На странице {url} отсутствует книга. Переходим к следующей.')
+            logger.warning(f'На странице {url} отсутствует книга. Переходим к следующей.')
             continue
 
         try:
