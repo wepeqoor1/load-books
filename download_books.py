@@ -63,10 +63,8 @@ def parse_book_page(response: requests.Response) -> dict:
     """Парсит html страницу и возвращает данные о книге"""
     page_html = BeautifulSoup(response.text, 'lxml')
 
-    if book_title := page_html.find('h1'):
-        title, author = [book.strip() for book in book_title.text.split('::')]
-    else:
-        raise ValueError
+    book_title = page_html.find('h1')
+    title, author = [book.strip() for book in book_title.text.split('::')]
 
     image_path = page_html.find('div', class_='bookimage').find('img')['src']
     image_url = urljoin(f'https://{urlsplit(response.url).netloc}', image_path)
@@ -86,7 +84,7 @@ def parse_book_page(response: requests.Response) -> dict:
     }
 
 
-def parse_arguments() -> argparse.ArgumentParser:
+def parse_console_arguments() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(""" \
     Программа предназначена для скачивания книг с сайта 'https://tululu.org'
     """)
@@ -97,11 +95,10 @@ def parse_arguments() -> argparse.ArgumentParser:
 
 
 def main() -> None:
-    # logging.basicConfig(filename='information.log', level=logging.INFO, encoding='utf-8')
     logger.add('information.log', format='{time:YYYY-MM-DD at HH:mm:ss} | {level} | {message}')
     logger.level('BOOK', no=38, color='<yellow>')
 
-    parser = parse_arguments()
+    parser = parse_console_arguments()
     args = parser.parse_args()
     book_id_from = args.first
     book_id_last = args.last
@@ -115,20 +112,20 @@ def main() -> None:
         url = f'https://tululu.org/b{book_id}/'
         try:
             response = get_response(url)
-            book_information = parse_book_page(response)
+            book_content = parse_book_page(response)
             logger.info(f'Информация о книге собрана с адреса {url}')
         except requests.HTTPError or ValueError:
             logger.warning(f'На странице {url} отсутствует книга. Переходим к следующей.')
             continue
 
         try:
-            download_txt(book_id, book_information['title'], url)
+            download_txt(book_id, book_content['title'], url)
             logger.info(f'Книга скачена')
         except requests.HTTPError:
             logger.info(f'Книга на странице {url} на скачена. Текст отсутствует по данному адресу.')
 
         try:
-            download_image(book_information['image_url'])
+            download_image(book_content['image_url'])
             logger.info(f'Изображение скачено')
         except requests.HTTPError:
             logger.info(f'Обложка на странице {url} на скачена. Картинка отсутствует по данному адресу.')
