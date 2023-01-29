@@ -14,8 +14,7 @@ from tqdm import tqdm
 
 def check_redirect(response: requests.Response) -> None:
     """Проверяет ссылки на редирект"""
-    response_url = response.url
-    if response_url == 'https://tululu.org/' or response.history:
+    if response.history:
         raise requests.HTTPError()
 
 
