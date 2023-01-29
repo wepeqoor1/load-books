@@ -115,22 +115,20 @@ def main() -> None:
         url = f'https://tululu.org/b{book_id}/'
         try:
             response = get_response(url)
-            page_values = parse_book_page(response)
+            book_information = parse_book_page(response)
             logger.info(f'Информация о книге собрана с адреса {url}')
-        except requests.HTTPError:
-            logger.warning(f'На странице {url} отсутствует книга. Переходим к следующей.')
-        except ValueError:
+        except requests.HTTPError or ValueError:
             logger.warning(f'На странице {url} отсутствует книга. Переходим к следующей.')
             continue
 
         try:
-            download_txt(book_id, page_values['title'], url)
+            download_txt(book_id, book_information['title'], url)
             logger.info(f'Книга скачена')
         except requests.HTTPError:
             logger.info(f'Книга на странице {url} на скачена. Текст отсутствует по данному адресу.')
 
         try:
-            download_image(page_values['image_url'])
+            download_image(book_information['image_url'])
             logger.info(f'Изображение скачено')
         except requests.HTTPError:
             logger.info(f'Обложка на странице {url} на скачена. Картинка отсутствует по данному адресу.')
