@@ -1,6 +1,4 @@
 import argparse
-import logging
-import sys
 import time
 from pathlib import Path
 from urllib.parse import urljoin, urlparse, urlsplit
@@ -84,7 +82,7 @@ def parse_book_page(response: requests.Response) -> dict:
     }
 
 
-def parse_console_arguments() -> argparse.ArgumentParser:
+def get_console_arguments() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(""" \
     Программа предназначена для скачивания книг с сайта 'https://tululu.org'
     """)
@@ -98,7 +96,7 @@ def main() -> None:
     logger.add('information.log', format='{time:YYYY-MM-DD at HH:mm:ss} | {level} | {message}')
     logger.level('BOOK', no=38, color='<yellow>')
 
-    parser = parse_console_arguments()
+    parser = get_console_arguments()
     args = parser.parse_args()
     book_id_from = args.first
     book_id_last = args.last
