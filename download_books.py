@@ -82,7 +82,7 @@ def parse_book_page(response: requests.Response) -> dict:
     }
 
 
-def get_console_arguments() -> argparse.ArgumentParser:
+def parse_command_line() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(""" \
     Программа предназначена для скачивания книг с сайта 'https://tululu.org'
     """)
@@ -96,7 +96,7 @@ def main() -> None:
     logger.add('information.log', format='{time:YYYY-MM-DD at HH:mm:ss} | {level} | {message}')
     logger.level('BOOK', no=38, color='<yellow>')
 
-    parser = get_console_arguments()
+    parser = parse_command_line()
     args = parser.parse_args()
     book_id_from = args.first
     book_id_last = args.last
