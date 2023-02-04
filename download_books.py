@@ -38,23 +38,29 @@ def get_response(url: str) -> requests.Response:
     return response
 
 
-def download_txt(book_id: int, file_name: str, url: str, dir_name: str = 'books/') -> None:
+def download_txt(book_id: int, file_name: str, url: str, dir_name: str = 'books/') -> str:
     """Скачивает текст"""
     response = get_response(url)
     clear_file_name = sanitize_filename(file_name)
+    book_path = f'{dir_name}{book_id}. {clear_file_name}.txt'
 
-    with open(f'{dir_name}/{book_id}. {clear_file_name}.txt', 'wb') as file:
+    with open(book_path, 'wb') as file:
         file.write(response.content)
 
+    return f'{dir_name}{clear_file_name}.txt'
 
-def download_image(url: str, dir_name: str = 'images/') -> None:
+
+def download_image(url: str, dir_name: str = 'images/') -> str:
     """Скачивает картинку книги"""
     response = get_response(url)
 
     file_name = urlparse(url).path.split('/')[-1]
+    img_src = f'{dir_name}{file_name}'
 
-    with open(f'{dir_name}/{file_name}', 'wb') as file:
+    with open(img_src, 'wb') as file:
         file.write(response.content)
+
+    return img_src
 
 
 def parse_book_page(response: requests.Response) -> dict:
@@ -78,7 +84,7 @@ def parse_book_page(response: requests.Response) -> dict:
         'author': author,
         'image_url': image_url,
         'comments': comments,
-        'genre': genres,
+        'genres': genres,
     }
 
 
