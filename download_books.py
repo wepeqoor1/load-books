@@ -104,8 +104,8 @@ def main() -> None:
 
     parser = create_parser()
     args = parser.parse_args()
-    category_page_num_from = args.first
-    category_page_num_to = args.last
+    start_page = args.first
+    end_page = args.last
 
     category_url_param = 'l55/'
     category_name = 'Научная фантастика.json'
@@ -116,7 +116,7 @@ def main() -> None:
     Path('images').mkdir(parents=True, exist_ok=True)
 
     books_content = []
-    for num_page in range(category_page_num_from, category_page_num_to + 1):
+    for num_page in range(start_page, end_page):
         logger.info(f'{num_page} страница категории')
         category_page_url = urljoin(category_url, str(num_page))
         response_category_page: requests.Response = get_response(category_page_url)
