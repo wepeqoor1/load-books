@@ -12,6 +12,11 @@ from download_tools import download_image, download_txt
 from web_requests import get_response
 
 
+URL_PARAM = 'l55/'  # url параметр на книги с "научной фантастикой"
+URL = 'https://tululu.org/'
+CATEGORY_NAME = 'Научная фантастика.json'  # Название категории книг
+
+
 class BookContent(TypedDict):
     title: str
     author: str
@@ -98,15 +103,15 @@ def init_logger() -> None:
     logger.level('BOOK', no=38, color='<yellow>')
 
 
-def get_books_content(args: ConsoleArgs, books_dir: str, images_dir: str, url_param: str, url: str) -> list:
+def get_books_content(args: ConsoleArgs, books_dir: str, images_dir: str) -> list:
     for num_page in range(args.start_page, args.end_page):
 
         logger.info(f'{num_page} страница категории \n')
 
-        category_url = urljoin(url, url_param)
+        category_url = urljoin(URL, URL_PARAM)
         category_page_url = urljoin(category_url, str(num_page))
         try:
-            books_urls: list = get_book_urls(category_page_url, url)
+            books_urls: list = get_book_urls(category_page_url, URL)
         except requests.HTTPError:
             logger.warning('Не удалось получить ссылки на книги')
 
@@ -141,8 +146,8 @@ def get_books_content(args: ConsoleArgs, books_dir: str, images_dir: str, url_pa
             yield book_content
 
 
-def save_books_content(books_content: list[BookContent], dest_folder: str, json_path: str, category_name: str) -> str:
-    category_path = json_path if json_path else Path(dest_folder, category_name)
+def save_books_content(books_content: list[BookContent], dest_folder: str, json_path: str) -> str:
+    category_path = json_path if json_path else Path(dest_folder, CATEGORY_NAME)
 
     with open(category_path, 'w', encoding='utf-8') as file:
         json.dump(books_content, file, ensure_ascii=False, indent=4)
@@ -151,15 +156,11 @@ def save_books_content(books_content: list[BookContent], dest_folder: str, json_
 
 
 def main() -> None:
-    url_param = 'l55/'  # url параметр на книги с "научной фантастикой"
-    url = 'https://tululu.org/'
-    category_name = 'Научная фантастика.json'  # Название категории книг
-
     init_logger()
     args = get_console_args()
     books_dir, images_dir = create_dirs(args.dest_folder)
-    books_content = list(get_books_content(args, books_dir, images_dir, url_param, url))
-    save_books_content(books_content, args.dest_folder, args.json_path, category_name)
+    books_content = list(get_books_content(args, books_dir, images_dir))
+    save_books_content(books_content, args.dest_folder, args.json_path)
 
 
 if __name__ == '__main__':
