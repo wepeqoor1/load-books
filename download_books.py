@@ -161,9 +161,8 @@ def main() -> None:
     books_dir, images_dir = create_dirs(args.dest_folder)
     books_content = list(get_books_content(args, books_dir, images_dir))
     save_books_content(books_content, args.dest_folder, args.json_path)
+    logger.info(f'Данные о книгах записаны в файл')
 
 
 if __name__ == '__main__':
-    logger.info('Запускаем')
     main()
-    logger.info(f'Данные о книгах записаны в файл')
