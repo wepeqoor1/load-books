@@ -17,7 +17,7 @@ URL = 'https://tululu.org/'
 CATEGORY_NAME = 'Научная фантастика.json'  # Название категории книг
 
 
-class BookContent(TypedDict):
+class BookContent(TypedDict, total=False):
     title: str
     author: str
     image_url: str
