@@ -66,8 +66,8 @@ def get_console_args() -> ConsoleArgs:
     parser = argparse.ArgumentParser(""" \
     Программа предназначена для скачивания книг с сайта 'https://tululu.org'
     """)
-    parser.add_argument('first', type=int, default=1, help='Номер первой страницы')
-    parser.add_argument('last', type=int, default=10, help='Номер последней страницы')
+    parser.add_argument('--first', type=int, default=1, help='Номер первой страницы')
+    parser.add_argument('--last', type=int, default=1000, help='Номер последней страницы')
     parser.add_argument(
         '--dest_folder', type=str, default='dest_folder/',
         help='путь к каталогу с результатами парсинга: картинкам, книгам, JSON.'
