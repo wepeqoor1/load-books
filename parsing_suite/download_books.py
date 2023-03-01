@@ -5,10 +5,11 @@ from pathlib import Path
 from typing import NamedTuple, TypedDict
 from urllib.parse import urljoin, urlparse, urlsplit
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 from loguru import logger
 
 from download_tools import download_image, download_txt
+from parsing_suite.custom_exceptions import NoFoundBookException
 from web_requests import get_response
 
 
@@ -25,6 +26,7 @@ class BookContent(TypedDict, total=False):
     genres: list
     book_path: str
     img_src: str
+    book_download_link: str
 
 
 class ConsoleArgs(NamedTuple):
@@ -39,12 +41,21 @@ class ConsoleArgs(NamedTuple):
 def parse_book_page(response: requests.Response) -> dict:
     """Парсит html страницу и возвращает данные о книге"""
     page_html = BeautifulSoup(response.text, 'lxml')
+    url = f'https://{urlsplit(response.url).netloc}'
 
     book_title = page_html.select_one('h1')
     title, author = [book.strip() for book in book_title.text.split('::')]
 
-    image_path = page_html.select_one('.bookimage img')['src']
-    image_url = urljoin(f'https://{urlsplit(response.url).netloc}', image_path)
+    image_url_path = page_html.select_one('.bookimage img')['src']
+    image_url = urljoin(url, image_url_path)
+
+    tags = page_html.select('.d_book a')
+    book_tag: list[Tag | None] = [tag for tag in tags if 'скачать txt' == tag.text]
+    if book_tag:
+        book_download_link = urljoin(url, book_tag[0]['href'])
+        logger.debug(book_download_link, colorama='red')
+    else:
+        raise NoFoundBookException
 
     comments_html = page_html.select('.texts .black')
     comments = [comment.text for comment in comments_html] if comments_html else None
@@ -52,7 +63,14 @@ def parse_book_page(response: requests.Response) -> dict:
     genres_html = page_html.select('span.d_book a')
     genres = [genre.text for genre in genres_html] if comments else None
 
-    return BookContent(title=title, author=author, image_url=image_url, comments=comments, genres=genres)
+    return BookContent(
+        title=title,
+        author=author,
+        image_url=image_url,
+        comments=comments,
+        genres=genres,
+        book_download_link=book_download_link
+    )
 
 
 def get_book_urls(category_page_url: str, url_path: str) -> list:
@@ -104,6 +122,7 @@ def init_logger() -> None:
 
 
 def get_books_content(args: ConsoleArgs, books_dir: str, images_dir: str) -> list:
+    """Парсим сайт с книгами на одной странице"""
     for num_page in range(args.start_page, args.end_page):
 
         logger.info(f'{num_page} страница категории \n')
@@ -125,10 +144,15 @@ def get_books_content(args: ConsoleArgs, books_dir: str, images_dir: str) -> lis
             except requests.HTTPError or ValueError:
                 logger.warning(f'На странице {book_url} отсутствует книга. Переходим к следующей.')
                 continue
+            except NoFoundBookException:
+                logger.warning('Ссылка на книгу отсутствует. Переходим к следующей.')
+                continue
 
             if not args.skip_txt:
                 try:
-                    book_path = download_txt(book_id, book_content['title'], book_url, books_dir)
+                    book_path = download_txt(
+                        book_id, book_content['title'], book_content['book_download_link'], books_dir
+                    )
                     book_content['book_path'] = book_path
                     logger.info(f'Книга скачена')
                 except requests.HTTPError:

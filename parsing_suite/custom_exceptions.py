@@ -1,0 +1,2 @@
+class NoFoundBookException(BaseException):
+    pass
