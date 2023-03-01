@@ -26,7 +26,7 @@ class BookContent(TypedDict, total=False):
     genres: list
     book_path: str
     img_src: str
-    book_download_link: str
+    book_link: str
 
 
 class ConsoleArgs(NamedTuple):
@@ -52,8 +52,8 @@ def parse_book_page(response: requests.Response) -> dict:
     tags = page_html.select('.d_book a')
     book_tag: list[Tag | None] = [tag for tag in tags if 'скачать txt' == tag.text]
     if book_tag:
-        book_download_link = urljoin(url, book_tag[0]['href'])
-        logger.debug(book_download_link, colorama='red')
+        book_link = urljoin(url, book_tag[0]['href'])
+        logger.debug(book_link, colorama='red')
     else:
         raise NoFoundBookException
 
@@ -69,7 +69,7 @@ def parse_book_page(response: requests.Response) -> dict:
         image_url=image_url,
         comments=comments,
         genres=genres,
-        book_download_link=book_download_link
+        book_link=book_link
     )
 
 
@@ -151,7 +151,7 @@ def get_books_content(args: ConsoleArgs, books_dir: str, images_dir: str) -> lis
             if not args.skip_txt:
                 try:
                     book_path = download_txt(
-                        book_id, book_content['title'], book_content['book_download_link'], books_dir
+                        book_id, book_content['title'], book_content['book_link'], books_dir
                     )
                     book_content['book_path'] = book_path
                     logger.info(f'Книга скачена')
