@@ -11,6 +11,32 @@
     <title>Сайт библиотеки</title>
   </head>
   <body>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        {% for page_path in pages_path %}
+          <li class="page-item"><a class="page-link" href="#">Предыдущая</a></li>
+          <li class="page-item"><a class="page-link" href="{{ page_path }}">{{ loop.index }}</a></li>
+          <li class="page-item"><a class="page-link" href="#">Следующая</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+
+    <nav aria-label="...">
+  <ul class="pagination">
+    <li class="page-item disabled">
+      <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+    </li>
+    <li class="page-item"><a class="page-link" href="#">1</a></li>
+    <li class="page-item active" aria-current="page">
+      <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
+    </li>
+    <li class="page-item"><a class="page-link" href="#">3</a></li>
+    <li class="page-item">
+      <a class="page-link" href="#">Next</a>
+    </li>
+  </ul>
+</nav>
+
     <div class="card mb-3" style="max-width: 1000px;">
       {% for book_content_bundle in books_content %}
         <div class="container">
@@ -26,7 +52,7 @@
                     <div class="card-body">
                       <h5 class="card-title">{{ book.title }}</h5>
                       <h6 class="card-author">{{ book.author }}</h6>
-                      <a href="{{ book.book_path }}" target="_blank" rel="noopener noreferrer">Читать</a>
+                      <a href="{{ book.book_path}}" target="_blank" rel="noopener noreferrer">Читать</a>
                     </div>
                   </div>
                 </div>
