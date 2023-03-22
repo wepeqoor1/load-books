@@ -58,6 +58,15 @@
                   <div class="col-md-8">
                     <div class="card-body">
                       <h5 class="card-title">{{ book.title }}</h5>
+                      {% if book.genres %}
+                        <h6>Жанры</h6>
+                        {% for genre in book.genres %}
+                          <h6><span class="badge badge-primary">
+                              {{ genre }}
+                          </span></h6>
+                        {% endfor %}
+                      {% endif %}
+
                       <h6 class="card-author">{{ book.author }}</h6>
                       <a href="{{ book.book_path}}" target="_blank" rel="noopener noreferrer">Читать</a>
                     </div>
