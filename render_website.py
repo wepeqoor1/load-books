@@ -1,14 +1,17 @@
 import json
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
+from typing import Iterator
 
 import more_itertools
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 PAGES_DIR = 'pages'
 
-def get_nearby_pages(pages: list) -> itertools.tee:
-    """Генерирует список страниц для пагинации"""
+def get_nearby_pages(pages: list) -> Iterator:
+    """
+    Генерирует список страниц для пагинации
+    """
     for idx, page in enumerate(pages):
         if idx == 0:
             yield None, page, pages[idx + 1]

@@ -10,9 +10,9 @@
     <title>Сайт библиотеки</title>
   </head>
   <body>
-    <nav aria-label="Page navigation example">
+    <nav aria-label="Page navigation example" style="margin-top: 15px;">
       <ul class="pagination">
-        <!--Деактивация кнопки "Вперед", если страница последняя-->
+        <!--Деактивация кнопки "Назад", если страница последняя-->
         {% if previous_page_path %}
           <li class="page-item">
         {% else %}
@@ -21,8 +21,8 @@
         <!--Конец деактивации кнопки-->
           <a class="page-link" href="{{ previous_page_path }}" tabindex="-1" aria-disabled="true">Назад</a>
           </li>
-          {% for page_path in pages_path %}
           <!--Генерируем кнопок с пагинацией-->
+          {% for page_path in pages_path %}
             {% if current_page_file_name == page_path[1] %}
               <li class="page-item active"aria-current="true">
             {% else %}
