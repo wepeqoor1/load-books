@@ -6,7 +6,7 @@ from typing import Iterator
 import more_itertools
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-PAGES_DIR = 'pages'
+PAGES_DIR = 'docs'
 
 def get_nearby_pages(pages: list) -> Iterator:
     """
