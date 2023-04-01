@@ -37,7 +37,7 @@
             {% else %}
               <li class="page-item"aria-current="true">
             {% endif %}
-              <a class="page-link" href="../{{ page_path[1] }}">{{ loop.index }} <span class="sr-only">(current)</span></a>
+              <a class="page-link" href="./{{ page_path[1] }}">{{ loop.index }} <span class="sr-only">(current)</span></a>
             </li>
           {% endfor %}
           <!--Конец генерации кнопок с пагинацией-->

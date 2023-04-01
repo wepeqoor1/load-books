@@ -125,7 +125,7 @@ def get_books_content(args: ConsoleArgs, books_dir: str, images_dir: str) -> lis
     """Парсим сайт с книгами на одной странице"""
     for num_page in range(args.start_page, args.end_page):
 
-        logger.info(f'{num_page} страница категории \n')
+        logger.info(f'---\n{num_page} страница категории \n --- \n')
 
         category_url = urljoin(URL, URL_PARAM)
         category_page_url = urljoin(category_url, str(num_page))
@@ -165,7 +165,7 @@ def get_books_content(args: ConsoleArgs, books_dir: str, images_dir: str) -> lis
                     book_content['img_src'] = img_src
                     logger.info(f'Изображение скачено')
                 except requests.HTTPError:
-                    logger.info(f'Обложка на странице {book_url} на скачена. Картинка отсутствует по данному адресу.')
+                    logger.info(f'Обложка на странице {book_url} не скачена. Картинка отсутствует по данному адресу.')
 
             yield book_content
 

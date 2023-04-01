@@ -11,7 +11,7 @@ def download_txt(book_id: str, file_name: str, url: str, books_dir: str, ) -> st
     """Скачивает текст"""
     response: requests.Response = get_response(url)
     clear_file_name = sanitize_filename(file_name)
-    book_path = f'{PurePosixPath(books_dir, book_id)}. {clear_file_name}.txt'
+    book_path = f'{PurePosixPath(book_id)}. {clear_file_name}.txt'
     quote_book_path = quote(book_path, encoding='utf-8')
 
     with open(quote_book_path, 'wb') as file:
@@ -28,7 +28,3 @@ def download_image(url: str, dir_name: str) -> str:
         file.write(response.content)
 
     return img_src
-
-
-# parsing-online-library/dest_folder/books/18973.%20%D0%90%20%D0%B2%D0%B4%D1%80%D1%83%D0%B3.txt
-# parsing-online-library\dest_folder\books\18973.%20%D0%90%20%D0%B2%D0%B4%D1%80%D1%83%D0%B3.txt
