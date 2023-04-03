@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup, Tag
 from loguru import logger
 
 from download_tools import download_image, download_txt
-from parsing_suite.custom_exceptions import NoFoundBookException
+from parsing_site.custom_exceptions import NoFoundBookException
 from web_requests import get_response
 
 
