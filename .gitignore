@@ -1,7 +1,4 @@
 venv/
-images/
-books/
 .idea/
 *.log
 *.txt
-*.json
