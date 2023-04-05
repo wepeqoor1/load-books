@@ -62,7 +62,7 @@
                 <!--Книга с описанием-->
                 <div class="row no-gutters">
                   <div class="col-md-4">
-                    <img src="/{{ book.img_src }}" class="card-img" alt="{{ book.title }}">
+                    <img src="/parsing-online-library/{{ book.img_src }}" class="card-img" alt="{{ book.title }}">
                   </div>
                   <div class="col-md-8">
                     <div class="card-body">
@@ -77,7 +77,7 @@
                       {% endif %}
 
                       <h6 class="card-author">{{ book.author }}</h6>
-                      <a href="/{{ book.book_path|urlencode}}" target="_blank" rel="noopener noreferrer">Читать</a>
+                      <a href="/parsing-online-library/{{ book.book_path|urlencode}}" target="_blank" rel="noopener noreferrer">Читать</a>
                     </div>
                   </div>
                 </div>
