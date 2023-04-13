@@ -21,7 +21,7 @@
   <body>
     <nav aria-label="Page navigation example" style="margin-top: 15px;">
       <ul class="pagination">
-        <!--Деактивация кнопки "Назад", если страница последняя-->
+        <!--Деактивация кнопки "Назад", если страница первая-->
         {% if previous_page_path %}
           <li class="page-item">
         {% else %}
@@ -31,13 +31,13 @@
           <a class="page-link" href="{{ previous_page_path }}" tabindex="-1" aria-disabled="true">Назад</a>
           </li>
           <!--Генерируем кнопок с пагинацией-->
-          {% for page_path in pages_path %}
-            {% if current_page_file_name == page_path[1] %}
+          {% for pagination_page_name in pagination_pages_name %}
+            {% if current_page_path == pagination_page_name[1] %}
               <li class="page-item active"aria-current="true">
             {% else %}
               <li class="page-item"aria-current="true">
             {% endif %}
-              <a class="page-link" href="{{ page_path[1] }}">{{ loop.index }} <span class="sr-only">(current)</span></a>
+              <a class="page-link" href="{{ pagination_page_name[1] }}">{{ loop.index }} <span class="sr-only">(current)</span></a>
             </li>
           {% endfor %}
           <!--Конец генерации кнопок с пагинацией-->
@@ -62,7 +62,7 @@
                 <!--Книга с описанием-->
                 <div class="row no-gutters">
                   <div class="col-md-4">
-                    <img src="/parsing-online-library/{{ book.img_src }}" class="card-img" alt="{{ book.title }}">
+                    <img src="/parsing-online-library/../{{ book.img_src }}" class="card-img" alt="{{ book.title }}">
                   </div>
                   <div class="col-md-8">
                     <div class="card-body">

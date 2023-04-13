@@ -52,11 +52,13 @@ pagination_pages_name = list(
 for page_content, PageName in zip(books_content_chunked, pagination_pages_name):
     rendered_page = template.render({
         'books_content': page_content,
-        'pages_path': pagination_pages_name,
-        'current_page_file_name': PageName.current,
+        'pagination_pages_name': pagination_pages_name,
+        'current_page_path': PageName.current,
         'previous_page_path': PageName.previous,
         'next_page_path': PageName.next
     })
+    print(page_content)
+
     with open(Path(PAGES_DIR, PageName.current), 'w', encoding='utf8') as file:
         file.write(rendered_page)
 
