@@ -57,7 +57,6 @@ for page_content, PageName in zip(books_content_chunked, pagination_pages_name):
         'previous_page_path': PageName.previous,
         'next_page_path': PageName.next
     })
-    print(page_content)
 
     with open(Path(PAGES_DIR, PageName.current), 'w', encoding='utf8') as file:
         file.write(rendered_page)
