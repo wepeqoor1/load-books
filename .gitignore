@@ -3,3 +3,4 @@ venv/
 *.log
 *.txt
 *_pycache_*
+dest_folder/

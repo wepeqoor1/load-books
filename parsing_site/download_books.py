@@ -87,7 +87,7 @@ def get_console_args() -> ConsoleArgs:
     parser.add_argument('--first', type=int, default=1, help='Номер первой страницы')
     parser.add_argument('--last', type=int, default=1000, help='Номер последней страницы')
     parser.add_argument(
-        '--dest_folder', type=str, default='dest_folder/',
+        '--dest_folder', type=str, default='docs/assets/',
         help='путь к каталогу с результатами парсинга: картинкам, книгам, JSON.'
     )
     parser.add_argument('--skip_imgs', action='store_true', help='не скачивать картинки')
