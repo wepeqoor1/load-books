@@ -2,4 +2,3 @@ venv/
 .idea/
 *.log
 *_pycache_*
-dest_folder/
