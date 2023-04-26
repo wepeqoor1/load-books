@@ -10,7 +10,7 @@ pip install -r requirements.txt
 ```
 - Запустите команду:
 ```bash
-python download_books.py <первый номер страницы> <последний номер страницы>
+python parsing_site/download_books.py <первый номер страницы> <последний номер страницы>
 ```
 
 ## Параметры запуска
