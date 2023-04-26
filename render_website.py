@@ -1,13 +1,16 @@
 import json
 from http.server import HTTPServer, SimpleHTTPRequestHandler
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Iterator, NamedTuple
+import shutil
 
 import more_itertools
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
-DOCS_DIR = 'docs/'
+CATEGORY_NAME = 'Научная фантастика.json'  # Название категории книг
+DEST_FOLDER = 'dest_folder/'
+PAGES_DIR = 'pages/'
 
 
 class PageName(NamedTuple):
@@ -30,22 +33,24 @@ def get_nearby_pages(pages: list) -> Iterator:
 
 
 env = Environment(
-    loader=FileSystemLoader('..'),
+    loader=FileSystemLoader(''),
     autoescape=select_autoescape(['html', 'xml'])
 )
-template = env.get_template('template.html')
+template = env.get_template(f'template.html')
 
-with open('./Научная фантастика.json', 'r', encoding='utf-8') as read_file:
+with open(f'{DEST_FOLDER}{CATEGORY_NAME}', 'r', encoding='utf-8') as read_file:
     books_content = list(more_itertools.chunked(json.load(read_file), 2))
     books_content_chunked = list(more_itertools.chunked(books_content, 10))
 
-Path(DOCS_DIR).mkdir(parents=True, exist_ok=True)
-Path(f'{DOCS_DIR}/assets').mkdir(parents=True, exist_ok=True)
+# if Path(PAGES_DIR).exists():
+#     shutil.rmtree(PAGES_DIR)
+# Path(PAGES_DIR).mkdir(parents=True, exist_ok=True)
+
 
 pagination_pages_name = list(
     get_nearby_pages(
         [
-            'index.html' if idx_page == 0 else f'index{idx_page}.html'
+            f'index.html' if idx_page == 0 else f'index{idx_page}.html'
             for idx_page, _ in enumerate(books_content_chunked)
         ]
     )
@@ -59,13 +64,8 @@ for page_content, PageName in zip(books_content_chunked, pagination_pages_name):
         'previous_page_name': PageName.previous,
         'next_page_name': PageName.next
     })
-    print(f'{page_content=}')
-    print(f'{pagination_pages_name=}')
-    print(f'{PageName.current=}')
-    print(f'{PageName.previous=}')
-    print(f'{PageName.next=}')
 
-    with open(Path(DOCS_DIR, PageName.current), 'w', encoding='utf8') as file:
+    with open(PurePosixPath(PageName.current), 'w', encoding='utf8') as file:
         file.write(rendered_page)
 
 server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)

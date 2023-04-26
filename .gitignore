@@ -1,6 +1,5 @@
 venv/
 .idea/
 *.log
-*.txt
 *_pycache_*
 dest_folder/

@@ -1,7 +1,7 @@
 import argparse
 import json
 import requests
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import NamedTuple, TypedDict
 from urllib.parse import urljoin, urlparse, urlsplit
 
@@ -87,7 +87,7 @@ def get_console_args() -> ConsoleArgs:
     parser.add_argument('--first', type=int, default=1, help='Номер первой страницы')
     parser.add_argument('--last', type=int, default=1000, help='Номер последней страницы')
     parser.add_argument(
-        '--dest_folder', type=str, default='docs/assets/',
+        '--dest_folder', type=str, default='dest_folder/',
         help='путь к каталогу с результатами парсинга: картинкам, книгам, JSON.'
     )
     parser.add_argument('--skip_imgs', action='store_true', help='не скачивать картинки')
@@ -171,7 +171,7 @@ def get_books_content(args: ConsoleArgs, books_dir: str, images_dir: str) -> lis
 
 
 def save_books_content(books_content: list[BookContent], dest_folder: str, json_path: str) -> str:
-    category_path = json_path if json_path else Path(dest_folder, CATEGORY_NAME)
+    category_path = json_path if json_path else PurePosixPath(dest_folder, CATEGORY_NAME)
 
     with open(category_path, 'w', encoding='utf-8') as file:
         json.dump(books_content, file, ensure_ascii=False, indent=4)

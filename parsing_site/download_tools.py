@@ -1,8 +1,9 @@
 from pathlib import PurePosixPath
-from urllib.parse import urlparse, quote
+from urllib.parse import urlparse
 
 import requests
 from pathvalidate import sanitize_filename
+from transliterate import slugify
 
 from web_requests import get_response
 
@@ -10,14 +11,14 @@ from web_requests import get_response
 def download_txt(book_id: str, file_name: str, url: str, books_dir: str, ) -> str:
     """Скачивает текст"""
     response: requests.Response = get_response(url)
-    clear_file_name = sanitize_filename(file_name)
-    book_path = f'{PurePosixPath(book_id)}. {clear_file_name}.txt'
-    quote_book_path = quote(book_path, encoding='utf-8')
+    clear_file_name = slugify(sanitize_filename(file_name))
+    book_path = f'{PurePosixPath(books_dir, book_id)}.{clear_file_name}.txt'
 
-    with open(quote_book_path, 'wb') as file:
+    with open(book_path, 'wb') as file:
         file.write(response.content)
 
-    return quote_book_path
+    return book_path
+
 
 def download_image(url: str, dir_name: str) -> str:
     """Скачивает картинку книги"""
