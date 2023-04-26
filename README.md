@@ -1,4 +1,5 @@
 # Скачиваем книги с сайта https://tululu.org
+https://wepeqoor1.github.io/parsing-online-library/  
 ![image](https://user-images.githubusercontent.com/46388832/234690855-0e22ec2c-829b-41a1-af2e-0d6f8b084a24.png)
 
 ## Запуск
@@ -37,4 +38,4 @@ python parsing_site/download_books.py <первый номер страницы>
 ```bash
 python render_website.py
 ```
-Открываем в браузере любую сгенерированную html страницу в директории `docs/`
+Открываем в браузере любую сгенерированную html страницу в директории в корневой директории
